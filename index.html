@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gruta Martica | Artefactos</title>
+<meta name="description" content="Plano acotado y modelo 3D de una gruta ojival de concreto sobre una base de 50 × 40 cm, con una columna al frente.">
+<meta name="color-scheme" content="light dark">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=Azeret+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: plano de taller. Visor 3D y tabla de medidas arriba, vistas acotadas abajo con cotas naranja como en AutoCAD. */
+:root{
+  --bg:#ECEEEF; --surface:#F8F9F9; --ink:#1B1F23; --muted:#5B636A; --line:#CDD2D5;
+  --dim:#B4510A; --geo:#1B1F23; --fill:#E3E6E8; --fill2:#D5D9DC; --cavity:#BFC5C9;
+  --scene:#E3E6E8; --stone:#C6C9C7; --stone2:#AAB0B3; --edge:#2A2F34; --grid:#C9CED1;
+  --f-display:'Archivo','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'Azeret Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101214; --surface:#171A1D; --ink:#E6E8EA; --muted:#98A0A7; --line:#2C3136;
+    --dim:#F08A2A; --geo:#D8DBDE; --fill:#1F2327; --fill2:#2A2F34; --cavity:#08090A;
+    --scene:#15181B; --stone:#A2A7A8; --stone2:#868C8F; --edge:#0D0F11; --grid:#2A2F33;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101214; --surface:#171A1D; --ink:#E6E8EA; --muted:#98A0A7; --line:#2C3136;
+  --dim:#F08A2A; --geo:#D8DBDE; --fill:#1F2327; --fill2:#2A2F34; --cavity:#08090A;
+  --scene:#15181B; --stone:#A2A7A8; --stone2:#868C8F; --edge:#0D0F11; --grid:#2A2F33;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 44px;display:grid;gap:24px}
+
+/* Enlace de regreso al índice de Artefactos */
+.back{justify-self:start;font:500 12px/1 var(--f-mono);color:var(--muted);text-decoration:none;padding:6px 0}
+.back:hover{color:var(--ink);text-decoration:underline;text-underline-offset:.3em}
+.back:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0}
+h1{font-family:var(--f-display);font-stretch:78%;font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1;margin:6px 0 10px;letter-spacing:-.01em;text-wrap:balance}
+.lede{margin:0;max-width:62ch}
+h2{font-family:var(--f-display);font-stretch:85%;font-weight:650;font-size:21px;line-height:1.2;margin:0;text-wrap:balance}
+
+.stage{display:grid;gap:16px}
+@media (min-width:900px){.stage{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);align-items:start}}
+.viewer{position:relative;width:100%;max-width:100%;aspect-ratio:5/4;background:var(--scene);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+@media (min-width:900px){.viewer{aspect-ratio:auto;height:520px}}
+.viewer canvas{display:block;width:100%;height:100%}
+.vtop{position:absolute;top:10px;right:10px}
+.hint{position:absolute;left:12px;bottom:10px;right:12px;font-family:var(--f-mono);font-size:11px;color:var(--muted);pointer-events:none;margin:0}
+.fallback{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted);font-size:14px}
+.btn{font:500 12px/1 var(--f-mono);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 12px;cursor:pointer}
+.btn:focus-visible,.seg button:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+
+.spec{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.spec > div{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;padding:11px 14px;border-top:1px solid var(--line)}
+.spec > div:first-child{border-top:0}
+.spec dt{font:500 10.5px/1.9 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.spec dd{margin:0;font-size:14px;line-height:1.45;min-width:0;font-variant-numeric:tabular-nums}
+.spec dd b{font-weight:650}
+.spec .key{background:color-mix(in srgb, var(--dim) 7%, var(--surface))}
+.spec .key b{color:var(--dim);font-family:var(--f-display);font-stretch:85%;font-size:20px;font-weight:650}
+.spec .tip{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+
+.seg{display:inline-flex;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:2px}
+.seg button{font:500 12px/1 var(--f-mono);color:var(--muted);background:none;border:0;border-radius:999px;padding:8px 12px;cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--ink);color:var(--surface)}
+
+.views{display:grid;gap:12px}
+.views-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.figs{display:grid;gap:14px}
+@media (min-width:900px){.figs{grid-template-columns:repeat(3,minmax(0,1fr))}.tabs{display:none}}
+@media (max-width:899px){.fig:not(.on){display:none}}
+.fig{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;display:grid;gap:8px;min-width:0;align-content:start}
+.fig h3{margin:0;font:600 12px/1.3 var(--f-mono);letter-spacing:.07em;text-transform:uppercase}
+.fig svg{width:100%;height:auto;display:block;max-height:440px}
+.fig figcaption{font-size:13px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px/1.4 var(--f-mono);color:var(--muted);margin:0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:7px}
+.legend svg{width:26px;height:8px;flex:none}
+
+/* trazos del plano */
+.g{fill:var(--fill);stroke:var(--geo);stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.g2{fill:var(--fill2);stroke:var(--geo);stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.gl{fill:none;stroke:var(--geo);stroke-width:1;vector-effect:non-scaling-stroke}
+.cav{fill:var(--cavity);stroke:var(--geo);stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.hid{fill:none;stroke:var(--geo);stroke-width:.24;stroke-dasharray:1.2 .8;opacity:.8}
+.ctr{fill:none;stroke:var(--muted);stroke-width:.18;stroke-dasharray:3 .7 .6 .7}
+.ext,.dl{fill:none;stroke:var(--dim);stroke-width:.9;vector-effect:non-scaling-stroke}
+.arw{fill:var(--dim)}
+.dt{fill:var(--dim);font-family:var(--f-mono);font-size:2.6px;font-weight:500;paint-order:stroke;stroke:var(--surface);stroke-width:.7px;stroke-linejoin:round}
+.dt.hi{font-size:3.2px;font-weight:600}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <a class="back" href="../../">← Artefactos</a>
+  <header>
+    <p class="eyebrow">Cotas en cm</p>
+    <h1>Gruta Martica</h1>
+    <p class="lede">Base de 50 × 40 × 8&nbsp;cm con una gruta ojival hueca de 40&nbsp;cm de alto y 26&nbsp;cm de fondo, y una columna de 8&nbsp;cm de diámetro y 18&nbsp;cm de alto al frente.</p>
+  </header>
+
+  <section class="stage" aria-label="Modelo 3D y medidas">
+    <div class="viewer" id="viewer">
+      <div class="vtop"><button type="button" class="btn" id="reset">Restablecer vista</button></div>
+      <p class="hint" id="hint">Arrastra para girar · pellizca o rueda para acercar</p>
+    </div>
+
+    <dl class="spec">
+      <div><dt>Base</dt><dd><b>50 × 40 × 8</b> cm</dd></div>
+      <div><dt>Gruta</dt><dd><b>40</b> de ancho × <b>40</b> de alto × <b>26</b> de fondo. El frente queda a 14&nbsp;cm del borde delantero y la parte de atrás al ras del borde trasero. Arranca a 5&nbsp;cm de cada lado.</dd></div>
+      <div class="key"><dt>Arco</dt><dd><b>R 62 cm</b><br>Dos arcos que se cortan en el vértice. El centro de cada uno está a 41,7&nbsp;cm del eje, del lado contrario, y 5,9&nbsp;cm por debajo del arranque.<span class="tip">Para trazarlo: con un hilo de 62&nbsp;cm, un arco desde el arranque y otro desde el vértice se cruzan en el centro.</span></dd></div>
+      <div><dt>Boca</dt><dd><b>32 × 34,4</b> cm. Radio interior de 58&nbsp;cm, con los mismos centros.</dd></div>
+      <div><dt>Interior</dt><dd><b>22</b> cm de hondo. Paredes y fondo de 4&nbsp;cm.</dd></div>
+      <div><dt>Columna</dt><dd><b>8</b> cm de diámetro × <b>18</b> cm de alto. Su borde queda a 3&nbsp;cm del frente y a 1&nbsp;cm del lado derecho.</dd></div>
+      <div><dt>Separación</dt><dd><b>3</b> cm entre la columna y el frente de la gruta.</dd></div>
+      <div><dt>Volumen</dt><dd>Gruta ≈ <b>11,6</b> L · total con base y columna ≈ <b>28,5</b> L</dd></div>
+    </dl>
+  </section>
+
+  <section class="views" aria-labelledby="h-views">
+    <div class="views-head">
+      <h2 id="h-views">Vistas acotadas</h2>
+      <div class="seg tabs" role="tablist" aria-label="Vista">
+        <button type="button" role="tab" id="t-fro" aria-selected="true" data-v="fro">Frontal</button>
+        <button type="button" role="tab" id="t-lat" aria-selected="false" data-v="lat">Lateral</button>
+        <button type="button" role="tab" id="t-pla" aria-selected="false" data-v="pla">Planta</button>
+      </div>
+    </div>
+    <div class="figs">
+      <figure class="fig on" data-v="fro">
+        <h3>Frontal</h3>
+        <svg id="svg-fro" viewBox="-12 -53 74 70" role="img" aria-label="Vista frontal acotada"></svg>
+        <figcaption>La boca de la cueva aparece sombreada.</figcaption>
+      </figure>
+      <figure class="fig" data-v="lat">
+        <h3>Lateral derecha</h3>
+        <svg id="svg-lat" viewBox="-12 -53 64 76" role="img" aria-label="Vista lateral derecha acotada"></svg>
+        <figcaption>El frente de la pieza queda a la izquierda.</figcaption>
+      </figure>
+      <figure class="fig" data-v="pla">
+        <h3>Planta</h3>
+        <svg id="svg-pla" viewBox="-12 -16 74 61" role="img" aria-label="Vista en planta acotada"></svg>
+        <figcaption>Vista desde arriba. El frente queda abajo.</figcaption>
+      </figure>
+    </div>
+    <ul class="legend">
+      <li><svg viewBox="0 0 26 8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="ext"/></svg>Cota en cm</li>
+      <li><svg viewBox="0 0 26 8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" style="stroke:var(--geo);stroke-width:1.2;stroke-dasharray:4 3;opacity:.8"/></svg>Línea oculta</li>
+      <li><svg viewBox="0 0 26 8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:8 2 2 2"/></svg>Eje</li>
+    </ul>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+  'use strict';
+  // F: borde delantero → frente de la gruta. D: fondo de la gruta. CZ: borde delantero → centro de la columna. T: pared.
+  var F = 14, D = 26, CZ = 7, T = 4;
+
+  /* ---------- arco ojival: radio 62, pasa por el arranque (5,0) y el vértice (25,40) ---------- */
+  var R0 = 62, K = Math.sqrt((R0*R0 - 500)/5), CX = 15 + 2*K, CY = 20 - K, N = 48;
+  function leftArc(R){
+    var uf = CX - Math.sqrt(R*R - CY*CY);
+    var va = CY + Math.sqrt(R*R - (25-CX)*(25-CX));
+    var a0 = Math.atan2(0-CY, uf-CX), a1 = Math.atan2(va-CY, 25-CX);
+    var pts = [];
+    for (var i=0;i<=N;i++){ var a = a0 + (a1-a0)*i/N; pts.push([CX + R*Math.cos(a), CY + R*Math.sin(a)]); }
+    pts[0] = [uf, 0]; pts[N] = [25, va];
+    return { pts: pts, uf: uf, va: va };
+  }
+  function ogive(R){
+    var L = leftArc(R);
+    var right = L.pts.slice(0, -1).reverse().map(function(p){ return [50-p[0], p[1]]; });
+    return { pts: L.pts.concat(right), uf: L.uf, va: L.va };
+  }
+  var GEO = { O: ogive(R0), I: ogive(R0 - T) };
+
+  /* ---------- formato ---------- */
+  function fmt(n){ var r = Math.round(n*10)/10; return Math.abs(r - Math.round(r)) < 1e-9 ? String(Math.round(r)) : r.toFixed(1).replace('.', ','); }
+  function f(n){ return String(Math.round(n*100)/100); }
+
+  /* ---------- cotas SVG ---------- */
+  var AL = 1.3, AW = 0.42;
+  function arrow(x,y,dx,dy){ var bx=x-dx*AL, by=y-dy*AL, px=-dy*AW, py=dx*AW; return '<path class="arw" d="M'+f(x)+' '+f(y)+'L'+f(bx+px)+' '+f(by+py)+'L'+f(bx-px)+' '+f(by-py)+'Z"/>'; }
+  function ln(x1,y1,x2,y2,c){ return '<line class="'+c+'" x1="'+f(x1)+'" y1="'+f(y1)+'" x2="'+f(x2)+'" y2="'+f(y2)+'"/>'; }
+  function rc(x,y,w,h,c){ return '<rect class="'+c+'" x="'+f(x)+'" y="'+f(y)+'" width="'+f(w)+'" height="'+f(h)+'"/>'; }
+  function dimH(x1,x2,y,label,e1,e2,tx){
+    var s='';
+    if (e1 != null){ var g1 = Math.sign(y-e1)||1; s += ln(x1, e1+g1*.6, x1, y+g1*1.2, 'ext'); }
+    if (e2 != null){ var g2 = Math.sign(y-e2)||1; s += ln(x2, e2+g2*.6, x2, y+g2*1.2, 'ext'); }
+    s += ln(x1,y,x2,y,'dl') + arrow(x1,y,-1,0) + arrow(x2,y,1,0);
+    s += '<text class="dt" x="'+f(tx != null ? tx : (x1+x2)/2)+'" y="'+f(y-.9)+'" text-anchor="middle">'+label+'</text>';
+    return s;
+  }
+  function dimV(x,y1,y2,label,e1,e2,side){
+    var s='';
+    if (e1 != null){ var g1 = Math.sign(x-e1)||1; s += ln(e1+g1*.6, y1, x+g1*1.2, y1, 'ext'); }
+    if (e2 != null){ var g2 = Math.sign(x-e2)||1; s += ln(e2+g2*.6, y2, x+g2*1.2, y2, 'ext'); }
+    s += ln(x,y1,x,y2,'dl') + arrow(x,y1,0,-1) + arrow(x,y2,0,1);
+    var tx = side === 'r' ? x + 2.8 : x - .9;
+    s += '<text class="dt" transform="translate('+f(tx)+' '+f((y1+y2)/2)+') rotate(-90)" text-anchor="middle">'+label+'</text>';
+    return s;
+  }
+  function radiusDim(R, v){
+    var u = CX - Math.sqrt(R*R - (v-CY)*(v-CY));
+    var du = CX - u, dv = CY - v, n = Math.hypot(du, dv); du /= n; dv /= n;
+    var px = u, py = -v, dx = du, dy = -dv;
+    var qx = px - dx*8, qy = py - dy*8, lx = qx - 7;
+    return ln(px,py,qx,qy,'dl') + ln(qx,qy,lx,qy,'dl') + arrow(px,py,dx,dy) +
+      '<text class="dt hi" x="'+f((qx+lx)/2)+'" y="'+f(qy-.9)+'" text-anchor="middle">R'+fmt(R)+'</text>';
+  }
+  function path(pts){ return 'M' + pts.map(function(p){ return f(p[0])+' '+f(-p[1]); }).join('L') + 'Z'; }
+
+  function frontSVG(){
+    var O=GEO.O, I=GEO.I, s='';
+    s += rc(0,0,50,8,'g');
+    s += '<path class="g" d="'+path(O.pts)+'"/>';
+    s += '<path class="cav" d="'+path(I.pts)+'"/>';
+    s += rc(41,-18,8,18,'g');
+    s += ln(45,1.5,45,-19.6,'ctr');
+    s += dimV(-5,-40,0,'40',25,0,'l');
+    s += dimV(-5,0,8,'8',0,0,'l');
+    s += dimH(5,45,-46,'40',0,-18);
+    s += dimH(0,50,13,'50',8,8);
+    s += dimV(55,-18,0,'18',49,49,'r');
+    s += dimH(I.uf, 50-I.uf, -3, fmt(50-2*I.uf), null, null, (I.uf+25)/2);
+    s += dimV(25, -I.va, 0, fmt(I.va), null, null, 'l');
+    s += radiusDim(R0, 26);
+    return s;
+  }
+  function sideSVG(){
+    var I=GEO.I, s='';
+    s += rc(0,0,40,8,'g');
+    s += rc(F,-40,D,40,'g');
+    s += ln(F+D-T,0,F+D-T,-I.va,'hid'); s += ln(F,-I.va,F+D-T,-I.va,'hid');
+    s += rc(CZ-4,-18,8,18,'g');
+    s += ln(CZ,1.5,CZ,-19.6,'ctr');
+    s += dimH(0,F,-46,fmt(F),0,-40);
+    s += dimH(F,F+D,-46,fmt(D),-40,-40);
+    if (F+D < 40) s += dimH(F+D,40,-46,fmt(40-F-D),-40,0);
+    s += dimH(CZ+4,F,-24,fmt(F-CZ-4),-18,null);
+    s += dimH(0,CZ-4,13,fmt(CZ-4),8,0);
+    s += dimH(0,40,19,'40',8,8);
+    s += dimV(47,-40,0,'40',F+D,40,'r');
+    s += dimV(47,0,8,'8',40,40,'r');
+    s += dimV(-5,-18,0,'18',CZ-4,0,'l');
+    s += dimH(F,F+D-T,-8,fmt(D-T));
+    return s;
+  }
+  function planSVG(){
+    var I=GEO.I, bf=40-F, b0=bf-D, cy=40-CZ, s='';
+    s += rc(0,0,50,40,'g');
+    s += rc(5,b0,40,D,'g2');
+    s += ln(25,b0,25,bf,'gl');
+    s += ln(I.uf,b0+T,I.uf,bf,'hid');
+    s += ln(50-I.uf,b0+T,50-I.uf,bf,'hid');
+    s += ln(I.uf,b0+T,50-I.uf,b0+T,'hid');
+    s += '<circle class="g" cx="45" cy="'+f(cy)+'" r="4"/>';
+    s += ln(39.6,cy,50.4,cy,'ctr') + ln(45,cy-5.4,45,cy+5.4,'ctr');
+    s += dimH(5,45,-5,'40',b0,b0);
+    s += dimH(0,50,-11,'50',0,0);
+    s += dimV(-5,0,40,'40',0,0,'l');
+    if (b0 > 0) s += dimV(56,0,b0,fmt(b0),50,45,'r');
+    s += dimV(56,b0,bf,fmt(D),b0>0?45:50,45,'r');
+    s += dimV(56,bf,cy-4,fmt(cy-4-bf),45,45,'r');
+    s += dimV(56,cy-4,cy+4,'8',45,45,'r');
+    s += dimV(56,cy+4,40,fmt(40-cy-4),45,50,'r');
+    return s;
+  }
+  document.getElementById('svg-fro').innerHTML = frontSVG();
+  document.getElementById('svg-lat').innerHTML = sideSVG();
+  document.getElementById('svg-pla').innerHTML = planSVG();
+
+  /* ---------- pestañas (solo en pantallas angostas) ---------- */
+  var tabs = document.querySelectorAll('.tabs [role=tab]');
+  Array.prototype.forEach.call(tabs, function(b){
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(tabs, function(o){ o.setAttribute('aria-selected', o === b ? 'true' : 'false'); });
+      Array.prototype.forEach.call(document.querySelectorAll('.fig'), function(fg){ fg.classList.toggle('on', fg.getAttribute('data-v') === b.getAttribute('data-v')); });
+    });
+  });
+
+  /* ---------- visor 3D ---------- */
+  function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function W(u,v,z){ return [u-25, v+8, z]; }
+  function fail(msg){
+    var fb = document.createElement('div'); fb.className = 'fallback'; fb.textContent = msg;
+    document.getElementById('viewer').appendChild(fb); document.getElementById('hint').hidden = true;
+  }
+
+  function init3D(){
+    var el = document.getElementById('viewer');
+    if (!window.THREE || !THREE.OrbitControls){ fail('No se pudo cargar el visor 3D. Las vistas acotadas de abajo muestran la pieza completa.'); return; }
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    el.insertBefore(renderer.domElement, el.firstChild);
+    renderer.domElement.setAttribute('aria-label', 'Modelo 3D de la gruta');
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(34, 1, 1, 2000);
+    var HOME = { pos: [62, 48, 92], target: [0, 17, -1] };
+    camera.position.fromArray(HOME.pos);
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.fromArray(HOME.target);
+    controls.minDistance = 40; controls.maxDistance = 320;
+    controls.maxPolarAngle = Math.PI/2 + 0.12;
+    controls.update();
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f94, 0.62));
+    var sun = new THREE.DirectionalLight(0xffffff, 0.78);
+    sun.position.set(46, 92, 70); sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    var sc = sun.shadow.camera; sc.left = -60; sc.right = 60; sc.top = 60; sc.bottom = -60; sc.near = 10; sc.far = 260;
+    sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.15;
+    scene.add(sun);
+    var fillL = new THREE.DirectionalLight(0xffffff, 0.22); fillL.position.set(-70, 30, -40); scene.add(fillL);
+
+    function std(r){ return new THREE.MeshStandardMaterial({ roughness: r, metalness: 0, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }); }
+    var mats = { stone: std(.92), stone2: std(.85), base: std(.95) };
+    var edgeMat = new THREE.LineBasicMaterial();
+    var gridMat = new THREE.LineBasicMaterial({ transparent: true, opacity: .9 });
+
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: .16 }));
+    floor.rotation.x = -Math.PI/2; floor.receiveShadow = true; scene.add(floor);
+    var gp = []; for (var k=-70;k<=70;k+=10){ gp.push(k,0.02,-70, k,0.02,70, -70,0.02,k, 70,0.02,k); }
+    var gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(gp, 3));
+    scene.add(new THREE.LineSegments(gg, gridMat));
+
+    function addSolid(geo, mat, thr){
+      var m = new THREE.Mesh(geo, mat); m.castShadow = true; m.receiveShadow = true; scene.add(m);
+      if (thr) scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, thr), edgeMat));
+    }
+    var bg = new THREE.BoxGeometry(50, 8, 40); bg.translate(0, 4, 0); addSolid(bg, mats.base, 20);
+    var cg = new THREE.CylinderGeometry(4, 4, 18, 56); cg.translate(20, 17, 20 - CZ); addSolid(cg, mats.stone2, 30);
+
+    function extrude(pts, depth, z0){
+      var shape = new THREE.Shape(pts.map(function(p){ return new THREE.Vector2(p[0]-25, p[1]+8); }));
+      var g = new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false });
+      g.translate(0, 0, z0); return g;
+    }
+    function at(pts, z){ return pts.map(function(p){ return W(p[0], p[1], z); }); }
+    function poly(arr, E){ for (var i=0;i<arr.length-1;i++){ E.push.apply(E, arr[i]); E.push.apply(E, arr[i+1]); } }
+    function seg(a, b, E){ E.push.apply(E, a); E.push.apply(E, b); }
+
+    // gruta hueca: anillo ojival a todo el fondo + pared trasera
+    var O = GEO.O, I = GEO.I, E = [];
+    var zf = 20 - F, zb = zf - D, zc = zf - (D - T);
+    addSolid(extrude(O.pts.concat(I.pts.slice().reverse()), zf - zb, zb), mats.stone);
+    addSolid(extrude(I.pts, zc - zb, zb), mats.stone);
+    var of = at(O.pts, zf), inf = at(I.pts, zf), ob = at(O.pts, zb), ic = at(I.pts, zc);
+    poly(of, E); poly(inf, E);
+    seg(of[0], inf[0], E); seg(of[of.length-1], inf[inf.length-1], E);
+    poly(ob.concat([ob[0]]), E);
+    poly(ic, E); seg(ic[0], ic[ic.length-1], E);
+    seg(W(25, I.va, zf), W(25, I.va, zc), E);
+    seg(W(I.uf, 0, zf), W(I.uf, 0, zc), E);
+    seg(W(50-I.uf, 0, zf), W(50-I.uf, 0, zc), E);
+    seg(W(25, O.va, zf), W(25, O.va, zb), E);
+    seg(W(O.uf, 0, zf), W(O.uf, 0, zb), E);
+    seg(W(50-O.uf, 0, zf), W(50-O.uf, 0, zb), E);
+    var eg = new THREE.BufferGeometry(); eg.setAttribute('position', new THREE.Float32BufferAttribute(E, 3));
+    scene.add(new THREE.LineSegments(eg, edgeMat));
+
+    function render(){ renderer.render(scene, camera); }
+    function applyTheme(){
+      scene.background = new THREE.Color(tok('--scene'));
+      mats.stone.color.set(tok('--stone')); mats.stone2.color.set(tok('--stone2'));
+      mats.base.color.set(tok('--stone')); mats.base.color.offsetHSL(0, 0, -0.04);
+      edgeMat.color.set(tok('--edge')); gridMat.color.set(tok('--grid'));
+      render();
+    }
+    function resize(){
+      var w = el.clientWidth, h = el.clientHeight; if (!w || !h) return;
+      renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix(); render();
+    }
+    controls.addEventListener('change', render);
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(el); else window.addEventListener('resize', resize);
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', applyTheme);
+    new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    document.getElementById('reset').addEventListener('click', function(){
+      camera.position.fromArray(HOME.pos); controls.target.fromArray(HOME.target); controls.update(); render();
+    });
+    applyTheme(); resize();
+  }
+  try { init3D(); } catch (err) { fail('No se pudo iniciar el visor 3D en este dispositivo. Las vistas acotadas de abajo muestran la pieza completa.'); }
+})();
+</script>
+
+</body>
+</html>

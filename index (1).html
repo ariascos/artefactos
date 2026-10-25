@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artefactos | Álvaro Riascos Villegas</title>
+  <meta name="description" content="Piezas interactivas, informes y herramientas de Álvaro Riascos Villegas sobre economía, matemática aplicada e inteligencia artificial.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cline x1='9' y1='10' x2='23' y2='22' stroke='%239aa7b2' stroke-width='2'/%3E%3Ccircle cx='9' cy='10' r='6' fill='%232a6f97'/%3E%3Ccircle cx='23' cy='22' r='6' fill='%23b06f12'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&family=Schibsted+Grotesk:wght@400;600&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <a class="skip" href="#indice">Saltar al índice</a>
+
+  <header class="site-header wrap">
+    <a class="site-name" href="./">Álvaro Riascos Villegas</a>
+    <nav class="site-nav" aria-label="Principal">
+      <a href="./" aria-current="page">Artefactos</a>
+      <a href="acerca.html">Acerca</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div>
+        <h1>Artefactos</h1>
+        <p class="lede">Piezas interactivas, informes y herramientas sobre economía, matemática aplicada e inteligencia artificial.</p>
+      </div>
+      <figure class="map" id="mapa">
+        <div class="map-canvas"></div>
+        <figcaption>Cada punto es un artefacto. Las líneas unen los que comparten temas.</figcaption>
+      </figure>
+    </section>
+
+    <section class="index wrap" id="indice" aria-labelledby="indice-titulo">
+      <h2 class="visually-hidden" id="indice-titulo">Índice de artefactos</h2>
+      <div class="index-tools">
+        <div class="filters" id="filtros" role="group" aria-label="Filtrar por categoría"></div>
+        <label class="visually-hidden" for="buscar">Buscar artefactos</label>
+        <input class="search" id="buscar" type="search" placeholder="Buscar por título o tema" autocomplete="off">
+      </div>
+      <ul class="list" id="lista" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer wrap">
+    <span>© 2026 Álvaro Riascos Villegas</span>
+    <a href="https://alvaroriascos.com">Blog: Tercera Cultura</a>
+  </footer>
+
+  <script src="assets/js/artefactos.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>
